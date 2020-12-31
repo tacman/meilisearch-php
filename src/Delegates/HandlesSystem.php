@@ -24,6 +24,16 @@ trait HandlesSystem
         return $this->health->show();
     }
 
+    public function is_healthy(): bool
+    {
+        try {
+            $this->health();
+        } catch (Exception) {
+            return false;
+        }
+        return true;
+    }
+
     public function version(): array
     {
         return $this->version->show();

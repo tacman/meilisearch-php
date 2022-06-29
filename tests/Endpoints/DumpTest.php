@@ -13,20 +13,7 @@ final class DumpTest extends TestCase
     {
         $dump = $this->client->createDump();
 
-        $this->assertArrayHasKey('uid', $dump);
+        $this->assertArrayHasKey('taskUid', $dump);
         $this->assertArrayHasKey('status', $dump);
-        $this->assertEquals('in_progress', $dump['status']);
-
-        $dump = $this->client->getDumpStatus($dump['uid']);
-
-        $this->assertArrayHasKey('uid', $dump);
-        $this->assertArrayHasKey('status', $dump);
-    }
-
-    public function testDumpNotFound(): void
-    {
-        $this->expectException(ApiException::class);
-
-        $this->client->getDumpStatus('not-found');
     }
 }

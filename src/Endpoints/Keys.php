@@ -12,6 +12,7 @@ class Keys extends Endpoint
 {
     protected const PATH = '/keys';
 
+    private ?string $uid;
     private ?string $key;
     private ?string $description;
     private ?array $actions;
@@ -20,8 +21,10 @@ class Keys extends Endpoint
     private ?DateTime $createdAt;
     private ?DateTime $updatedAt;
 
-    public function __construct(Http $http, $key = null, $description = null, $actions = null, $indexes = null, $expiresAt = null, $createdAt = null, $updatedAt = null)
+    public function __construct(Http $http, $uid = null, $name = null, $key = null, $description = null, $actions = null, $indexes = null, $expiresAt = null, $createdAt = null, $updatedAt = null)
     {
+        $this->uid = $uid;
+        $this->name = $name;
         $this->key = $key;
         $this->description = $description;
         $this->actions = $actions;
@@ -37,6 +40,8 @@ class Keys extends Endpoint
     {
         $key = new self(
             $this->http,
+            $attributes['uid'],
+            $attributes['name'],
             $attributes['key'],
             $attributes['description'],
             $attributes['actions'],
@@ -60,6 +65,8 @@ class Keys extends Endpoint
      */
     protected function fill(array $attributes): self
     {
+        $this->uid = $attributes['uid'];
+        $this->name = $attributes['name'];
         $this->key = $attributes['key'];
         $this->description = $attributes['description'];
         $this->actions = $attributes['actions'];
@@ -96,6 +103,11 @@ class Keys extends Endpoint
     public function getKey(): ?string
     {
         return $this->key;
+    }
+
+    public function getUid(): ?string
+    {
+        return $this->uid;
     }
 
     public function getDescription(): ?string
@@ -163,10 +175,8 @@ class Keys extends Endpoint
 
     public function update(string $key, array $options = []): self
     {
-        if ($options['expiresAt'] && $options['expiresAt'] instanceof DateTime) {
-            $options['expiresAt'] = $options['expiresAt']->format('Y-m-d\TH:i:s.vu\Z');
-        }
-        $response = $this->http->patch(self::PATH.'/'.$key, $options);
+        $data = array_intersect_key($options, array_flip((array) ['description', 'name']));
+        $response = $this->http->patch(self::PATH.'/'.$key, $data);
 
         return $this->fill($response);
     }

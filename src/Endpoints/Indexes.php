@@ -77,8 +77,9 @@ class Indexes extends Endpoint
     public function all(): array
     {
         $indexes = [];
+        $response = $this->allRaw();
 
-        foreach ($this->allRaw() as $index) {
+        foreach ($response['results'] as $index) {
             $indexes[] = $this->newInstance($index);
         }
 
@@ -151,12 +152,12 @@ class Indexes extends Endpoint
 
     public function getTask($uid): array
     {
-        return $this->http->get(self::PATH.'/'.$this->uid.'/tasks'.'/'.$uid);
+        return $this->http->get('/tasks/'.$uid, ['indexUid' => $this->uid]);
     }
 
     public function getTasks(): array
     {
-        return $this->http->get(self::PATH.'/'.$this->uid.'/tasks');
+        return $this->http->get('/tasks', ['indexUid' => $this->uid]);
     }
 
     // Search
@@ -188,7 +189,9 @@ class Indexes extends Endpoint
         $result = $this->http->post(self::PATH.'/'.$this->uid.'/search', $parameters);
 
         // patch to prevent breaking in laravel/scout getTotalCount method.
-        $result['nbHits'] = $result['estimativeNbHits'];
+        if (isset($result['estimatedTotalHits'])) {
+            $result['nbHits'] = $result['estimatedTotalHits'];
+        }
 
         return $result;
     }

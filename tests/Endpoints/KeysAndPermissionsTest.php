@@ -26,7 +26,7 @@ final class KeysAndPermissionsTest extends TestCase
     {
         $response = $this->client->getKeys();
 
-        $this->assertCount(2, $response);
+        $this->assertGreaterThan(2, $response);
         $this->assertIsArray($response[0]->getActions());
         $this->assertIsArray($response[0]->getIndexes());
         $this->assertNull($response[0]->getExpiresAt());
@@ -38,7 +38,7 @@ final class KeysAndPermissionsTest extends TestCase
     {
         $response = $this->client->getRawKeys();
 
-        $this->assertCount(2, $response['results']);
+        $this->assertGreaterThan(2, $response['results']);
         $this->assertArrayHasKey('actions', $response['results'][0]);
         $this->assertArrayHasKey('indexes', $response['results'][0]);
         $this->assertArrayHasKey('createdAt', $response['results'][0]);
@@ -174,9 +174,7 @@ final class KeysAndPermissionsTest extends TestCase
     {
         $key = $this->client->createKey(self::INFO_KEY);
         $response = $this->client->updateKey($key->getKey(), [
-            'description' => 'test update',
-            'indexes' => ['*'],
-            'expiresAt' => date('Y-m-d', strtotime('+1 day')),
+            'description' => 'test update'
         ]);
 
         $this->assertNotNull($response->getKey());
@@ -185,8 +183,8 @@ final class KeysAndPermissionsTest extends TestCase
         $this->assertIsArray($response->getActions());
         $this->assertSame($response->getActions(), self::INFO_KEY['actions']);
         $this->assertIsArray($response->getIndexes());
-        $this->assertSame($response->getIndexes(), ['*']);
-        $this->assertNotNull($response->getExpiresAt());
+        $this->assertSame($response->getIndexes(), ['index']);
+        $this->assertNull($response->getExpiresAt());
         $this->assertNotNull($response->getCreatedAt());
         $this->assertNotNull($response->getUpdatedAt());
 
@@ -198,8 +196,6 @@ final class KeysAndPermissionsTest extends TestCase
         $key = $this->client->createKey(self::INFO_KEY);
         $response = $this->client->updateKey($key->getKey(), [
             'description' => 'test update',
-            'indexes' => ['*'],
-            'expiresAt' => date_create_from_format('Y-m-d', date('Y-m-d', strtotime('+1 day'))),
         ]);
 
         $this->assertNotNull($response->getKey());
@@ -208,8 +204,8 @@ final class KeysAndPermissionsTest extends TestCase
         $this->assertIsArray($response->getActions());
         $this->assertSame($response->getActions(), self::INFO_KEY['actions']);
         $this->assertIsArray($response->getIndexes());
-        $this->assertSame($response->getIndexes(), ['*']);
-        $this->assertNotNull($response->getExpiresAt());
+        $this->assertSame($response->getIndexes(), ['index']);
+        $this->assertNull($response->getExpiresAt());
         $this->assertNotNull($response->getCreatedAt());
         $this->assertNotNull($response->getUpdatedAt());
 
@@ -237,6 +233,8 @@ final class KeysAndPermissionsTest extends TestCase
             "results": [
               {
                 "description": "test_key_1",
+                "name": null,
+                "uid": "e3091e84-928c-44b5-8a61-7e5b15cd5009",
                 "key": "z1ySBsnp002e8bc6a31b794a95d623333be1fe4fd2d7eacdeaf7baf2c439866723e659ee",
                 "actions": ["*"],
                 "indexes": ["*"],
@@ -246,6 +244,8 @@ final class KeysAndPermissionsTest extends TestCase
               },
               {
                 "description": "test_key_2",
+                "name": null,
+                "uid": "85f12b91-cf39-493a-9364-7d8b85b87798",
                 "key": "z2ySBsnp002e8bc6a31b794a95d623333be1fe4fd2d7eacdeaf7baf2c439866723e659ee",
                 "actions": ["*"],
                 "indexes": ["*"],
@@ -255,6 +255,8 @@ final class KeysAndPermissionsTest extends TestCase
               },
               {
                 "description": "test_key_3",
+                "name": "test_key_3",
+                "uid": "6dffa3ee-b98f-4218-827a-7a062f23ebf5",
                 "key": "z3ySBsnp002e8bc6a31b794a95d623333be1fe4fd2d7eacdeaf7baf2c439866723e659ee",
                 "actions": ["*"],
                 "indexes": ["*"],
